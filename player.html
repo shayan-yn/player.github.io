@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>YouTube Player</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body, main { width: 100%; height: 100%; margin: 0; }
+    body { background: #000; color: #fff; font: 14px system-ui, sans-serif; }
+    main { display: grid; place-items: center; }
+    iframe { width: 100%; height: 100%; border: 0; }
+    #message { padding: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+  <main id="player"><div id="message">No video selected</div></main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const videoId = params.get('v') || '';
+
+    if (/^[A-Za-z0-9_-]{11}$/.test(videoId)) {
+      const embedParams = new URLSearchParams({ autoplay: '1', playsinline: '1' });
+      const start = Number.parseInt(params.get('start') || '', 10);
+      if (Number.isSafeInteger(start) && start > 0) embedParams.set('start', String(start));
+
+      const iframe = document.createElement('iframe');
+      iframe.title = 'YouTube video player';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.src = `https://www.youtube.com/embed/${videoId}?${embedParams}`;
+      document.getElementById('player').replaceChildren(iframe);
+    }
+  </script>
+</body>
+</html>
